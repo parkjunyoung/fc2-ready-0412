@@ -6,11 +6,34 @@
             <th>작성일</th>
             <th>삭제</th>
         </tr>
+        <% posts.forEach( function(post){ %>
         <tr>
-            <td></td>
-            <td></td>
-            <td></td>
+            <td>
+                <a href="/posts/detail/<%=post.id%>">
+                    <%=post.title%>
+                </a>
+            </td>
+            <td>
+                <%=post.getDate.year%>년 
+                <%=post.getDate.month%>월
+                <%=post.getDate.day%>일
+            </td>
+            <td><a href="/posts/delete/<%=post.id%>" 
+            class="btn btn-danger"
+            onclick="return confirm('삭제하시겠습니까?')">삭제</a></td>
         </tr>
+        <% }); %>
     </table>
+    <a href="/posts/write" class="btn btn-default">작성하기</a>
 
 <% include ../footer.ejs %>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,27 @@
+<% include ../header.ejs %>
+    <form action="" method="post">
+        <table class="table table-bordered">
+            <tr>
+                <th>제목</th>
+                <td>
+                    <input type="text" name="title" class="form-control" value="<%=post.title%>" />
+                </td>
+            </tr>
+            <tr>
+                <th>내용</th>
+                <td>
+                    <input type="text" name="content" class="form-control" value="<%=post.content%>" />
+                </td>
+            </tr>
+        </table>
+        <button class="btn btn-primary">작성하기</button>
+    </form>
+
+
+
+
+
+
+
+    
+<% include ../footer.ejs %>

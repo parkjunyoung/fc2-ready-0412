@@ -1,0 +1,50 @@
+<% include ../header.ejs %>
+    
+    <div class="panel panel-default">
+        <div class="panel-heading"><%=post.title%></div>
+        <div class="panel-body">
+            <div>
+                작성일 : 
+                <%=post.getDate.year%>년 
+                <%=post.getDate.month%>월 
+                <%=post.getDate.day%>일
+            </div>
+            <%=post.content%>
+            <!-- 댓글영역  -->
+            <div>
+                댓글작성하기
+                <form id="commentForm" action="" method="post">
+                    <input type="hidden" name="post_id" value="<%=post.id%>" />
+                    <textarea class="form-control" name="content"></textarea>
+                    <button class="btn btn-primary" style="margin-top: 10px">댓글작성</button>
+                </form>
+            </div>
+            <!-- 댓글영역  -->
+        </div>
+    </div>
+    <a href="/posts" class="btn btn-default">목록</a>
+    <a href="/posts/edit/<%=post.id%>" class="btn btn-primary">수정</a>
+    <a href="/posts/delete/<%=post.id%>" 
+    onclick="return confirm('삭제하시겠습니까?')"
+    class="btn btn-danger">삭제</a>
+
+<script type="text/javascript">
+(function(){
+    $(document).ready(function() {
+        alert("jquery ready"); 
+    });
+})();
+</script>
+
+
+
+
+
+
+
+
+
+
+    
+
+<% include ../footer.ejs %>

@@ -5,6 +5,22 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
+var mongoose = require('mongoose');
+mongoose.Promise = global.Promise;
+var autoIncrement = require('mongoose-auto-increment');
+
+var db = mongoose.connection;
+db.on( 'error', console.error );
+db.on( 'open' , function(){
+    console.log( "MongoDB Connect" );
+});
+
+var connect = 
+mongoose.connect('mongodb://127.0.0.1:27017/exercise');
+autoIncrement.initialize(connect);
+
+
+
 var index = require('./routes/index');
 var users = require('./routes/users');
 var posts = require('./routes/posts');
