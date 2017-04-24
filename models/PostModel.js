@@ -12,7 +12,8 @@ var PostSchema = new Schema({
     created_at : {
         type : Date,
         default : Date.now()
-    }
+    },
+    username : String  //작성자추가
 });
 
 PostSchema.virtual('getDate').get(function(){

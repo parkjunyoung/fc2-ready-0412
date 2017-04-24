@@ -26,12 +26,13 @@ passport.use(new FacebookStrategy({
         //console.log(profile.emails[0].value);
         //console.log(profile._raw);
         //console.log(profile._json);
-        UserModel.findOne({ username : profile._json.email },
+        UserModel.findOne({ username : "fb_" + profile.id },
             function(err, user){
                 if(!user){  //없으면 회원가입 후 로그인 성공페이지 이동
                     var regData = { //DB에 등록 및 세션에 등록될 데이터
-                        username : profile._json.email,
-                        password : "facebook_login"
+                        username : "fb_" + profile.id,
+                        password : "facebook_login",
+                        displayname : profile.displayName
                     };
                     var User = new UserModel(regData);
                     User.save(function(err){ //DB저장
@@ -54,7 +55,7 @@ router.get('/facebook', passport.authenticate('facebook', { scope: 'email'}) );
 router.get('/facebook/callback',
     passport.authenticate('facebook', 
         { 
-            successRedirect: '/auth/facebook/success',
+            successRedirect: '/posts',
             failureRedirect: '/auth/facebook/fail' 
         }
     )

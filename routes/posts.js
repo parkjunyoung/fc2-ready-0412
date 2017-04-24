@@ -3,15 +3,11 @@ var router = express.Router();
 var PostModel = require('../models/PostModel');
 var CommentModel = require('../models/CommentModel');
 
+var loginRequired = require('../libs/loginRequired');
+
 // csrf 셋팅
 var csrf = require('csurf');
 var csrfProtection = csrf({ cookie: true });
-
-router.get('/' , function(req, res){
-    PostModel.find().sort({ created_at : -1 }).exec(function(err, posts){
-        res.render('posts/list', { posts : posts });
-    });
-});
 
 //이미지 저장되는 위치 설정
 var path = require('path');
@@ -30,22 +26,30 @@ var storage = multer.diskStorage({
 });
 var upload = multer({ storage: storage });
 
-router.get('/write', csrfProtection, function(req, res){
+
+router.get('/' , function(req, res){
+    PostModel.find().sort({ created_at : -1 }).exec(function(err, posts){
+        res.render('posts/list', { posts : posts });
+    });
+});
+
+router.get('/write', loginRequired, csrfProtection, function(req, res){
     res.render('posts/form', { post : "", csrfToken : req.csrfToken() });
 });
 
-router.post('/write', upload.single('thumbnail'), csrfProtection, function(req, res){
+router.post('/write', loginRequired, upload.single('thumbnail'), csrfProtection, function(req, res){
     
     /*
     if(req.file.mimetype.split('/')[0]!=='image'){
         res.send('erro');
     }
-    */y
+    */
 
     var post = new PostModel({
         title : req.body.title,
         content : req.body.content,
-        thumbnail : (req.file) ? req.file.filename : ""
+        thumbnail : (req.file) ? req.file.filename : "",
+        username : req.user.displayname
     });
 
     var validationError = post.validateSync();
@@ -89,13 +93,13 @@ router.post('/ajax_comment/delete', function(req, res){
     });
 });
 
-router.get( '/edit/:id' , csrfProtection, function(req, res){
+router.get( '/edit/:id' ,loginRequired, csrfProtection, function(req, res){
     PostModel.findOne({ id : req.params.id }, function(err, post){
         res.render('posts/form', { post : post, csrfToken : req.csrfToken() }); 
     });
 });
 
-router.post( '/edit/:id', upload.single('thumbnail'), csrfProtection,  function(req, res){
+router.post( '/edit/:id',loginRequired, upload.single('thumbnail'), csrfProtection,  function(req, res){
     //그 이전 파일명을 먼저 받아온다.
     PostModel.findOne( {id : req.params.id} , function(err, post){
         
@@ -106,7 +110,8 @@ router.post( '/edit/:id', upload.single('thumbnail'), csrfProtection,  function(
         var query = {
             title : req.body.title,
             content : req.body.content,
-            thumbnail : (req.file) ? req.file.filename : post.thumbnail
+            thumbnail : (req.file) ? req.file.filename : post.thumbnail,
+            username : req.user.displayname
         };
         var post = new PostModel(query);
         if(!post.validateSync()){

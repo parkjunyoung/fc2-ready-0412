@@ -34,6 +34,7 @@ var users = require('./routes/users');
 var posts = require('./routes/posts');
 var accounts = require('./routes/accounts');
 var auth = require('./routes/auth');
+var chat = require('./routes/chat');
 
 var app = express();
 
@@ -69,12 +70,21 @@ app.use(passport.session());
 //플래시 메시지 관련
 app.use(flash());
 
+//로그인 정보 뷰에서만 변수로 셋팅, 전체 미들웨어는 router위에 두어야 에러가 안난다
+app.use(function(req, res, next) {
+  app.locals.isLogin = req.isAuthenticated();
+  //app.locals.urlparameter = req.url; //현재 url 정보를 보내고 싶으면 이와같이 셋팅
+  //app.locals.userData = req.user; //사용 정보를 보내고 싶으면 이와같이 셋팅
+  next();
+});
+
 
 app.use('/', index);
 app.use('/users', users);
 app.use('/posts', posts);
 app.use('/accounts', accounts);
 app.use('/auth', auth);
+app.use('/chat', chat);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -94,4 +104,34 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
+//socket io 셋팅
+app.io = require('socket.io')();
+
+
+app.io.on('connection', function(socket){
+
+  socket.on('chat message', function(data){
+      app.io.emit('toClient', data);
+  });
+  
+});
+
+
 module.exports = app;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
