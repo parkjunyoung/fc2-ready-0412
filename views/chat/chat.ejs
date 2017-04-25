@@ -50,7 +50,8 @@
     var socket = io();
 
     socket.on('toClient', function(data){
-        $('#chatBody').append('<li>' + data + '</li>');
+        $('#chatBody').append('<li>' + data.message + '</li>');
+        console.log(data);
     });
 
     $(document).ready(function() {
